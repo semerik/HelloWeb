@@ -1,4 +1,6 @@
+<%@page import="java.util.Calendar"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page import="java.time.LocalDate"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,22 +11,29 @@
         <jsp:useBean id="mybean" scope="session" class="org.mypackage.hello.NameHandler" />
         <jsp:setProperty name="mybean" property="name" />
         <jsp:setProperty name="mybean" property="nacimiento"/>
-        <%java.util.Calendar clock = java.util.Calendar.getInstance();%>
         
-    <c:choose>
+        <%-- fecha actual --%>
+        <% LocalDate currentDate = LocalDate.now(); %>
         
-        <c:when test="${clock.get(Calendar.HOUR_OF_DAY) < 12}">
-            <h1>Buenos días, <jsp:getProperty name="mybean" property="name" />, tu fecha de nacimiento es <jsp:getProperty name="mybean" property="nacimiento" />!</h1>
-        </c:when>
+        <%-- fecha de nacimiento del usuario --%>
+        <% LocalDate fechaNacimiento = LocalDate.parse(mybean.getNacimiento()); %>
         
-        <c:when test="${clock.get(Calendar.HOUR_OF_DAY) < 18}">
-            <h1>Buenas tardes, <jsp:getProperty name="mybean" property="name" />, tu fecha de nacimiento es <jsp:getProperty name="mybean" property="nacimiento" />!</h1>
-        </c:when>
+        <%-- Calcular edad del usuario --%>
+        <% int edad = currentDate.getYear() - fechaNacimiento.getYear(); %>
+        <% if (fechaNacimiento.getDayOfYear() > currentDate.getDayOfYear()) {
+                edad--;
+            } 
+        %>
         
-        <c:otherwise>
-            <h1>Buenas noches, <jsp:getProperty name="mybean" property="name" />, tu fecha de nacimiento es <jsp:getProperty name="mybean" property="nacimiento" />!</h1>
-        </c:otherwise>
-    </c:choose>
-
-</body>
+        <%-- Saludar al usuario según el horario del día y mostrar su edad --%>
+        <% java.util.Calendar clock = java.util.Calendar.getInstance();%>
+        <% if (clock.get(Calendar.HOUR_OF_DAY) < 12) { %>
+            <h1>Buenos días, <%= mybean.getName() %>, tu fecha de nacimiento es <%= mybean.getNacimiento() %> y tienes <%= edad %> años!</h1>
+        <% } else if (clock.get(Calendar.HOUR_OF_DAY) < 18) { %>
+            <h1>Buenas tardes, <%= mybean.getName() %>, tu fecha de nacimiento es <%= mybean.getNacimiento() %> y tienes <%= edad %> años!</h1>
+        <% } else { %>
+            <h1>Buenas noches, <%= mybean.getName() %>, tu fecha de nacimiento es <%= mybean.getNacimiento() %> y tienes <%= edad %> años!</h1>
+        <% } %>
+        
+    </body>
 </html>

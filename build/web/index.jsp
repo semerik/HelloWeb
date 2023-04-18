@@ -12,7 +12,7 @@
             Enter your name:
             <input type="text" name="name"/>
             Enter your birthdate
-            <input type="text" name="nacimiento"/>
+            <input type="text" name="nacimiento" pattern="\d{4}-\d{2}-\d{2}" placeholder="YYYY-MM-DD" />
             <input type="submit" value="OK" />
         </form>
         
